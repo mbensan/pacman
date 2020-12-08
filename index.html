@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juego Pacman</title>
+  <style>
+    body {
+      background-color: black;
+    }
+    .row div {
+      width: 20px;
+      height: 20px;
+      /*border: 1px solid black;*/
+      display: inline-block;
+    }
+    .brick {
+      background-color: brown;
+    }
+    .coin {
+      background-image: url('coin.gif');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    #pacman {
+      background-image: url('pacman.gif');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      width: 20px;
+      height: 20px;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <!-- Video: min 28:30 -->
+  <div class="container">
+
+    <div id="etapa"></div>
+    
+    <div id="pacman"></div>
+
+  </div>
+
+  <script>
+    var world = [
+      [2, 2, 2, 2, 2, 2, 2, 2, 2, 2], // 10 ladrillos
+      [2, 1, 1, 2, 1, 1, 1, 1, 1, 2], // ladrillo, 8 monedas, ladrillo
+      [2, 1, 1, 2, 1, 1, 1, 1, 1, 2], // ladrillo, 8 monedas, ladrillo
+      [2, 1, 1, 2, 2, 2, 1, 0, 1, 2], // ladrillo, 8 monedas, ladrillo
+      [2, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+      [2, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+      [2, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+      [2, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+      [2, 1, 1, 1, 1, 1, 1, 1, 1, 2], // ladrillo, 8 monedas, ladrillo
+      [2, 2, 2, 2, 2, 2, 2, 2, 2, 2] // 10 ladrillos
+    ];
+
+    /* Esta función es la encargada de dibujar el mundo */
+    function displayWorld() {
+      var mundo_actual = '';
+
+      for (var i=0; i<world.length; i++) {
+        // iniciamos la fila i
+        mundo_actual += '\n<div class="row">';
+  
+        // añadimos todo lo que esté dentro de la fila i
+        for (var j=0; j<world[i].length; j++) {
+          if (world[i][j] == 2) {
+            mundo_actual += '\n\t<div class="brick"></div>';
+          }
+
+          else if (world[i][j] == 1) {
+            mundo_actual += '\n\t<div class="coin"></div>';
+          }
+
+          else if (world[i][j] == 0) {
+            mundo_actual += '\n\t<div class="empty"></div>';
+          }
+        }
+        // cerramos la fila i
+        mundo_actual += '\n</div>';
+      }
+
+      var etapa = document.getElementById('etapa');
+      etapa.innerHTML = mundo_actual;
+    }
+
+    displayWorld();
+  </script>
+</body>
+</html>
