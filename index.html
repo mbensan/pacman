@@ -5,8 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Juego Pacman</title>
   <style>
+    * {
+      padding: 0px;
+      margin: 0px;
+    }
     body {
       background-color: black;
+    }
+    .row {
+      font-size: 0;
     }
     .row div {
       width: 20px;
@@ -19,10 +26,18 @@
     }
     .coin {
       background-image: url('coin.gif');
-      background-size: contain;
+      background-size: 5px;
       background-repeat: no-repeat;
       background-position: center;
     }
+
+    .cere {
+      background-image: url('cere.gif');
+      background-size: 20px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    
     #pacman {
       background-image: url('pacman.gif');
       background-size: contain;
@@ -31,6 +46,19 @@
       width: 20px;
       height: 20px;
       position: absolute;
+      
+    }
+    #puntaje {
+      border: 5px double white;
+      width: 170px;
+      height: 80px;
+      position: absolute;
+      top: 20px;
+      left: 420px;
+      padding: 20px;
+      border-radius: 20px;
+      color: white;
+      text-align: center;
     }
   </style>
 </head>
@@ -40,16 +68,25 @@
 
     <div id="etapa"></div>
     
-    <div id="pacman"></div>
+    <div id="pacman" style="top:20px; left: 20px;"></div>
+
+    <div id="puntaje">0</div>
+
 
   </div>
 
   <script>
+//                                0           1        2
+//    var multidimensional = [  [1,2,3] , [4,5,6] , [7,8,9] ];
+//                               0 1 2     0 1 2     0 1 2 
+  
+                          
+
     var world = [
       [2, 2, 2, 2, 2, 2, 2, 2, 2, 2], // 10 ladrillos
       [2, 1, 1, 2, 1, 1, 1, 1, 1, 2], // ladrillo, 8 monedas, ladrillo
       [2, 1, 1, 2, 1, 1, 1, 1, 1, 2], // ladrillo, 8 monedas, ladrillo
-      [2, 1, 1, 2, 2, 2, 1, 0, 1, 2], // ladrillo, 8 monedas, ladrillo
+      [2, 1, 1, 2, 2, 2, 1, 1, 1, 2], // ladrillo, 8 monedas, ladrillo
       [2, 1, 1, 1, 1, 1, 1, 1, 1, 2],
       [2, 1, 1, 1, 1, 1, 1, 1, 1, 2],
       [2, 1, 1, 1, 1, 1, 1, 1, 1, 2],
@@ -57,6 +94,44 @@
       [2, 1, 1, 1, 1, 1, 1, 1, 1, 2], // ladrillo, 8 monedas, ladrillo
       [2, 2, 2, 2, 2, 2, 2, 2, 2, 2] // 10 ladrillos
     ];
+
+    world = [
+      [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+      [2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2],
+      [2,1,2,2,2,2,1,1,2,2,2,1,1,2,2,2,2,1,2],
+      [2,1,1,2,2,1,1,1,1,2,1,1,1,1,2,2,1,1,2],
+      [2,2,1,1,1,1,2,2,1,1,1,2,2,1,1,1,1,2,2],
+      [2,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,2],
+      [2,2,1,1,1,1,2,2,1,1,1,2,2,1,1,1,1,2,2],
+      [2,1,1,2,2,1,1,1,1,2,1,1,1,1,2,2,1,1,2],
+      [2,1,2,2,2,2,1,1,2,2,2,1,1,2,2,2,2,1,2],
+      [2,1,2,2,2,2,1,1,2,2,2,1,1,2,2,2,2,1,2],
+      [2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2],
+      [2,2,1,2,2,1,2,2,1,2,1,2,2,1,2,2,1,2,2],
+      [2,2,1,2,2,1,2,2,1,2,1,2,2,1,2,2,1,2,2],
+      [2,1,1,2,2,1,1,1,1,2,1,1,1,1,2,2,1,1,2],
+      [2,1,2,2,2,2,1,1,2,2,2,1,1,2,2,2,2,1,2],
+      [2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2],
+      [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+    ];
+
+    
+
+    var score = 0;
+
+    var pacman = {
+      x: 1,
+      y: 1
+    }
+
+    function displayPacman(){
+        document.getElementById('pacman').style.top = (pacman.y * 20) + "px";
+        document.getElementById('pacman').style.left = (pacman.x * 20) + "px";        
+    }
+
+    function displayScore(){
+        document.getElementById('puntaje').innerHTML = "PUNTAJE: " + score;
+    }
 
     /* Esta función es la encargada de dibujar el mundo */
     function displayWorld() {
@@ -69,26 +144,95 @@
         // añadimos todo lo que esté dentro de la fila i
         for (var j=0; j<world[i].length; j++) {
           if (world[i][j] == 2) {
-            mundo_actual += '\n\t<div class="brick"></div>';
+            mundo_actual += '\n<div class="brick"></div>';
           }
 
           else if (world[i][j] == 1) {
-            mundo_actual += '\n\t<div class="coin"></div>';
+            mundo_actual += '\n<div class="coin"></div>';
           }
 
           else if (world[i][j] == 0) {
-            mundo_actual += '\n\t<div class="empty"></div>';
+            mundo_actual += '\n<div class="empty"></div>';
+          }
+
+          else if (world[i][j] == 3) {
+            mundo_actual += '\n<div class="cere"></div>';
           }
         }
         // cerramos la fila i
         mundo_actual += '\n</div>';
       }
 
+      //console.log(mundo_actual);
+
       var etapa = document.getElementById('etapa');
       etapa.innerHTML = mundo_actual;
     }
 
     displayWorld();
+    displayPacman();
+    displayScore();
+
+    document.onkeydown = function(e){
+      //console.log(e.keyCode);
+
+      if(e.keyCode == 37 && world[pacman.y][pacman.x - 1] != 2 ){ // izquierda
+        //console.log("IZQUIERDA");
+        pacman.x--;
+        document.getElementById('pacman').style.transform = "rotate(180deg)";
+      } else  if(e.keyCode == 38 && world[pacman.y - 1][pacman.x] != 2 ){  // arriba
+        //console.log("ARRIBA");
+        //document.getElementById('pacman').style.transform = "rotate(0deg)";
+        pacman.y--; 
+        document.getElementById('pacman').style.transform = "rotate(270deg)";
+      } else  if(e.keyCode == 40  && world[pacman.y + 1][pacman.x] != 2 ){  // abajo
+        //console.log("ABAJO");
+        
+        document.getElementById('pacman').style.transform = "rotate(90deg)";
+
+        pacman.y++;
+      } else  if(e.keyCode == 39 && world[pacman.y][pacman.x + 1] != 2){  // derecha
+        //console.log("DERECHA");
+        pacman.x++;
+        document.getElementById('pacman').style.transform = "rotate(0deg)";
+      }
+
+      if(world[pacman.y][pacman.x] == 1){
+        world[pacman.y][pacman.x] = 0;
+        score += 10;
+        displayWorld();
+        displayScore();
+      }
+
+      if(world[pacman.y][pacman.x] == 3){
+        world[pacman.y][pacman.x] = 0;
+        score += 50;
+        displayWorld();
+        displayScore();
+      }
+
+      displayPacman();
+
+    }
+
+    // nos ayuda a ejecutar codigo a los milisegundos despues. 
+    setTimeout(function(){
+      console.log("AGREGAMOS CEREZA!!!");
+      //modificamos el mundo a cereza
+      world[1][9] = 3;
+      //mostramos el mundo.
+      displayWorld();
+    }, 3000);
+
+    // nos ayuda a ejecutar codigo CADA cierta cantidad de tiempo.
+    setInterval(function(){
+      console.log("AGREGAMOS CEREZA!!!");
+      //modificamos el mundo a cereza
+      world[1][9] = 3;
+      //mostramos el mundo.
+      displayWorld();
+    }, 30000);
+
   </script>
 </body>
 </html>
